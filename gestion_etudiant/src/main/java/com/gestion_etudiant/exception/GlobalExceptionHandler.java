@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+// import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
-        logger.error("ResponseStatusException: {}", ex.getReason());
+        logger.error("ResponseStatusException: {}", ex.getReason(), ex);
         ErrorResponse error = new ErrorResponse(ex.getStatusCode().value(), ex.getReason());
         return new ResponseEntity<>(error, ex.getStatusCode());
     }
@@ -28,22 +29,22 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("Données d'entrée invalides");
-        logger.error("Validation error: {}", message);
+        logger.error("Validation error: {}", message, ex);
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        logger.error("Data integrity violation: {}", ex.getMessage());
+        logger.error("Data integrity violation: {}", ex.getMessage(), ex);
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "L'email est déjà utilisé");
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        logger.error("Unexpected error: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erreur interne du serveur");
+        logger.error("Unexpected error: {}", ex.getMessage(), ex);
+        ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erreur interne du serveur: " + ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
