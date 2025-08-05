@@ -2,6 +2,7 @@ package com.gestion_etudiant.service;
 
 import com.gestion_etudiant.entity.Etudiant;
 import com.gestion_etudiant.repository.EtudiantRepository;
+import org.owasp.encoder.Encode;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,11 +19,31 @@ public class EtudiantService {
     }
 
     public Etudiant enregistrer(Etudiant e) {
+        // Sanitiser les entrées pour éviter les attaques XSS
+        e.setNom(Encode.forHtml(e.getNom()));
+        e.setPrenom(Encode.forHtml(e.getPrenom()));
+        e.setEmail(Encode.forHtml(e.getEmail()));
+
         // Vérifier si l'email existe déjà
         if (repository.existsByEmail(e.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'email est déjà utilisé");
         }
         return repository.save(e);
+    }
+
+    public Etudiant modifier(Long id, Etudiant nouveau) {
+        return repository.findById(id)
+                .map(e -> {
+                    // Sanitiser les nouvelles données
+                    if (!e.getEmail().equals(nouveau.getEmail()) && repository.existsByEmail(nouveau.getEmail())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'email est déjà utilisé");
+                    }
+                    e.setNom(Encode.forHtml(nouveau.getNom()));
+                    e.setPrenom(Encode.forHtml(nouveau.getPrenom()));
+                    e.setEmail(Encode.forHtml(nouveau.getEmail()));
+                    return repository.save(e);
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé"));
     }
 
     public List<Etudiant> lister() {
@@ -31,21 +52,6 @@ public class EtudiantService {
 
     public Etudiant obtenir(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé"));
-    }
-
-    public Etudiant modifier(Long id, Etudiant nouveau) {
-        return repository.findById(id)
-                .map(e -> {
-                    // Vérifier si l'email est modifié et s'il existe déjà
-                    if (!e.getEmail().equals(nouveau.getEmail()) && repository.existsByEmail(nouveau.getEmail())) {
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'email est déjà utilisé");
-                    }
-                    e.setNom(nouveau.getNom());
-                    e.setPrenom(nouveau.getPrenom());
-                    e.setEmail(nouveau.getEmail());
-                    return repository.save(e);
-                })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé"));
     }
 
