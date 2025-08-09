@@ -28,8 +28,7 @@ public class EtudiantDTO {
 
 
 
-
-// package com.gestion_etudiant.config;
+// salut, voici mon application que je developpe avec spring-boot dans vs code , xampp mysql et tester avec postman et documentation avec swagger .: package com.gestion_etudiant.config;
 
 // import io.jsonwebtoken.Claims;
 // import io.jsonwebtoken.Jwts;
@@ -78,22 +77,7 @@ public class EtudiantDTO {
 //         }
 //         filterChain.doFilter(request, response);
 //     }
-// }....et package com.gestion_etudiant.config;
-
-// import io.github.bucket4j.Bandwidth;
-// import io.github.bucket4j.Bucket;
-// import io.github.bucket4j.Refill;
-// import org.springframework.stereotype.Component;
-
-// import java.time.Duration;
-
-// @Component
-// public class RateLimiterConfig {
-//     public Bucket createBucket() {
-//         Bandwidth limit = Bandwidth.classic(10, Refill.greedy(10, Duration.ofMinutes(1)));
-//         return Bucket.builder().addLimit(limit).build();
-//     }
-// }...et package com.gestion_etudiant.config;
+// }......et package com.gestion_etudiant.config;
 
 // import org.springframework.context.annotation.Bean;
 // import org.springframework.context.annotation.Configuration;
@@ -132,7 +116,9 @@ public class EtudiantDTO {
 
 //         return http.build();
 //     }
-// }...et package com.gestion_etudiant.config;
+// }
+
+// .....et package com.gestion_etudiant.config;
 
 // import io.swagger.v3.oas.models.OpenAPI;
 // import io.swagger.v3.oas.models.info.Info;
@@ -232,7 +218,7 @@ public class EtudiantDTO {
 //         logger.warn("Échec de la connexion pour l'utilisateur : {}, identifiants invalides", username);
 //         return ResponseEntity.status(401).body("Identifiants invalides");
 //     }
-// }.....et package com.gestion_etudiant.controller;
+// }........et package com.gestion_etudiant.controller;
 
 // import com.gestion_etudiant.dto.EtudiantDTO;
 // import com.gestion_etudiant.entity.Etudiant;
@@ -322,7 +308,7 @@ public class EtudiantDTO {
 //         }
 //         service.supprimer(id);
 //     }
-// }....et package com.gestion_etudiant.dto;
+// }.....et package com.gestion_etudiant.dto;
 
 // import jakarta.validation.constraints.Email;
 // import jakarta.validation.constraints.NotBlank;
@@ -335,19 +321,19 @@ public class EtudiantDTO {
 
 //     @NotBlank(message = "Le nom est obligatoire")
 //     @Size(max = 50, message = "Le nom ne doit pas dépasser 50 caractères")
+//     @Pattern(regexp = "^[a-zA-Z\\s-]*$", message = "Le nom ne doit contenir que des lettres, espaces ou tirets")
 //     private String nom;
 
 //     @NotBlank(message = "Le prénom est obligatoire")
 //     @Size(max = 50, message = "Le prénom ne doit pas dépasser 50 caractères")
+//     @Pattern(regexp = "^[a-zA-Z\\s-]*$", message = "Le prénom ne doit contenir que des lettres, espaces ou tirets")
 //     private String prenom;
 
 //     @NotBlank(message = "L'email est obligatoire")
 //     @Email(message = "L'email doit être valide")
 //     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "L'email doit avoir un format valide (ex: exemple@domaine.com)")
 //     private String email;
-// }
-
-// ....et package com.gestion_etudiant.entity;
+// } .....et package com.gestion_etudiant.entity;
 
 // import jakarta.persistence.*;
 // import jakarta.validation.constraints.Email;
@@ -440,71 +426,14 @@ public class EtudiantDTO {
 //         ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erreur interne du serveur: " + ex.getMessage());
 //         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 //     }
-// }......et package com.gestion_etudiant.repository;
+// }.....et package com.gestion_etudiant.repository;
 
 // import com.gestion_etudiant.entity.Etudiant;
 // import org.springframework.data.jpa.repository.JpaRepository;
 
 // public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
 //     boolean existsByEmail(String email);
-// }.....et package com.gestion_etudiant.service;
-
-// import com.gestion_etudiant.entity.Etudiant;
-// import com.gestion_etudiant.repository.EtudiantRepository;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.stereotype.Service;
-// import org.springframework.web.server.ResponseStatusException;
-
-// import java.util.List;
-
-// @Service
-// public class EtudiantService {
-
-//     private final EtudiantRepository repository;
-
-//     public EtudiantService(EtudiantRepository repository) {
-//         this.repository = repository;
-//     }
-
-//     public Etudiant enregistrer(Etudiant e) {
-//         // Vérifier si l'email existe déjà
-//         if (repository.existsByEmail(e.getEmail())) {
-//             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'email est déjà utilisé");
-//         }
-//         return repository.save(e);
-//     }
-
-//     public List<Etudiant> lister() {
-//         return repository.findAll();
-//     }
-
-//     public Etudiant obtenir(Long id) {
-//         return repository.findById(id)
-//                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé"));
-//     }
-
-//     public Etudiant modifier(Long id, Etudiant nouveau) {
-//         return repository.findById(id)
-//                 .map(e -> {
-//                     // Vérifier si l'email est modifié et s'il existe déjà
-//                     if (!e.getEmail().equals(nouveau.getEmail()) && repository.existsByEmail(nouveau.getEmail())) {
-//                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'email est déjà utilisé");
-//                     }
-//                     e.setNom(nouveau.getNom());
-//                     e.setPrenom(nouveau.getPrenom());
-//                     e.setEmail(nouveau.getEmail());
-//                     return repository.save(e);
-//                 })
-//                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé"));
-//     }
-
-//     public void supprimer(Long id) {
-//         if (!repository.existsById(id)) {
-//             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Étudiant non trouvé");
-//         }
-//         repository.deleteById(id);
-//     }
-// }....et package com.gestion_etudiant;
+// }.....et package com.gestion_etudiant;
 
 // import org.springframework.boot.SpringApplication;
 
@@ -517,14 +446,14 @@ public class EtudiantDTO {
 // 		SpringApplication.run(GestionEtudiantApplication.class, args);
 // 	}
 
-// }
-// ......et spring.application.name=gestion_etudiant
-// spring.datasource.url=jdbc:mysql://mysql_container:3306/api_etudiant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-// # spring.datasource.url=jdbc:mysql://localhost:3306/api_etudiant_db?
+// } .......et spring.application.name=gestion_etudiant
+// # spring.datasource.url=jdbc:mysql://mysql_container:3306/api_etudiant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+// spring.datasource.url=jdbc:mysql://localhost:3306/api_etudiant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 // spring.datasource.username=root
 // spring.datasource.password=
 
 // spring.jpa.hibernate.ddl-auto=update
+// spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 // spring.jpa.show-sql=true
 // spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 // logging.level.com.gestion_etudiant=DEBUG
@@ -543,45 +472,10 @@ public class EtudiantDTO {
 
 // logging.level.org.springframework.beans.factory=DEBUG
 
-// server.port=8080
-
-
-
-// ....et services:
-//   mysql_container:
-//     image: mysql:8.0
-//     container_name: mysql_container
-//     restart: always
-//     environment:
-//       MYSQL_ROOT_PASSWORD: ""
-//       MYSQL_DATABASE: api_etudiant_db
-//     ports:
-//       - "3307:3306"
-//     volumes:
-//       - mysql_data:/var/lib/mysql
-//     healthcheck:
-//       test:
-//         ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot"]
-//       interval: 10s
-//       timeout: 5s
-//       retries: 10
-//   gestion_etudiant:
-//     image: gestion_etudiant:latest
-//     container_name: gestion_etudiant_container
-//     restart: always
-//     depends_on:
-//       mysql_container:
-//         condition: service_healthy
-//     ports:
-//       - "8080:8080"
-//     environment:
-//       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_container:3306/api_etudiant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-//       SPRING_DATASOURCE_USERNAME: root
-//       SPRING_DATASOURCE_PASSWORD: root
-// volumes:
-//   mysql_data:
-// .....et # Utiliser une image de base OpenJDK 17
+// server.port=8080  .......et # Utiliser une image de base OpenJDK 17
 // FROM openjdk:17-jdk-slim
+
+// VOLUME /tmp
 
 // # Définir le répertoire de travail dans le conteneur
 // WORKDIR /app
@@ -592,15 +486,50 @@ public class EtudiantDTO {
 // # Exposer le port 8080 (port par défaut de Spring Boot)
 // EXPOSE 8080
 
+
+
 // # Commande pour exécuter l'application
-// ENTRYPOINT ["java", "-jar", "app.jar"].....et <?xml version="1.0" encoding="UTF-8"?>
+// ENTRYPOINT ["java", "-jar", "app.jar"]....et services:
+//   mysql_container:
+//     image: mysql:8.0
+//     container_name: mysql_container
+//     restart: always
+//     environment:
+//       MYSQL_ROOT_PASSWORD: root
+//       MYSQL_DATABASE: api_etudiant_db
+//     ports:
+//       - "3307:3306"
+//     volumes:
+//       - mysql_data:/var/lib/mysql
+//     healthcheck:
+//       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+//       interval: 10s
+//       timeout: 5s
+//       retries: 10
+
+//   gestion_etudiant_container:
+//     build: .
+//     container_name: gestion_etudiant_container
+//     depends_on:
+//       mysql_container:
+//         condition: service_healthy
+//     ports:
+//       - "8080:8080"
+//     environment:
+//       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_container:3306/api_etudiant_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+//       SPRING_DATASOURCE_USERNAME: root
+//       SPRING_DATASOURCE_PASSWORD: root
+
+// volumes:
+//   mysql_data:
+// ..........et <?xml version="1.0" encoding="UTF-8"?>
 // <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 //     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 //     <modelVersion>4.0.0</modelVersion>
 //     <parent>
 //         <groupId>org.springframework.boot</groupId>
 //         <artifactId>spring-boot-starter-parent</artifactId>
-//         <version>3.5.4</version>
+//         <version>3.3.5</version>
 //         <relativePath/>
 //     </parent>
 //     <groupId>com</groupId>
@@ -610,7 +539,7 @@ public class EtudiantDTO {
 //     <description>Demo project for Spring Boot</description>
 //     <properties>
 //         <java.version>17</java.version>
-//         <springdoc.version>2.7.0</springdoc.version>
+//         <springdoc.version>2.6.0</springdoc.version>
 //     </properties>
 //     <dependencies>
 //         <dependency>
@@ -684,11 +613,17 @@ public class EtudiantDTO {
 //             <artifactId>spring-boot-starter-cache</artifactId>
 //         </dependency>
 //         <dependency>
-//             <groupId>com.github.vladimir-bukhtoyarov</groupId>
-//             <artifactId>bucket4j-core</artifactId>
-//             <version>8.10.0</version>
-//         </dependency>        
+//             <groupId>com.bucket4j</groupId>
+//             <artifactId>bucket4j_jdk17-core</artifactId>
+//             <version>8.14.0</version>
+//         </dependency>
 //     </dependencies>
+//     <repositories>
+//         <repository>
+//             <id>central</id>
+//             <url>https://repo.maven.apache.org/maven2</url>
+//         </repository>
+//     </repositories>
 //     <build>
 //         <plugins>
 //             <plugin>
@@ -736,4 +671,41 @@ public class EtudiantDTO {
 //             </plugin>
 //         </plugins>
 //     </build>
-// </project>
+// </project>....comme tu peux les constater ..j'ai deja fini d'integrer tout ces elements sauf le 8 eme  point pour l'element : - Implement rate limiting/throttlinget ce ceqe biensur tu dois m'aider a integrer dan mon API gestion_etudiant   : PROJETS REST API
+// --------------------------
+// Améilorez vos projets pour y intégrer les éléments suivants:
+
+
+// 1. API Design
+// - Use RESTful naming conventions
+// - Plan versioning (e.g., /api/v1/)
+
+// 2. Validation & Error Handling
+// - Validate inputs (e.g., using DTOs)
+// - Return meaningful HTTP status codes
+// - Include consistent error response format
+
+// 3. Authentication & Authorization
+// - Use JWT, OAuth2, or API keys
+// - Define user roles and permissions
+
+// 4. Logging & Monitoring
+// - Log requests/responses/errors (e.g., with Logback, ELK)
+// - Use tools like Prometheus, Grafana, or New Relic
+
+// 5. Testing
+// - Unit tests (e.g., JUnit)
+// - Integration tests (e.g., TestRestTemplate)
+// - API testing (e.g., Postman, Newman)
+
+// 6.Documentation
+// . Swagger/OpenAPI
+
+// 7. Deployment
+// - Containerize with Docker
+// - CI/CD with Jenkins
+// - Host on services like Render, etc.
+
+// 8. Security Best Practices
+// - Sanitize inputs to avoid SQL/XSS attacks
+// - Implement rate limiting/throttling   

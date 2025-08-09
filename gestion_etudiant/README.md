@@ -151,6 +151,7 @@ Tests d’intégration : Tester les endpoints de l’API (par ex., /api/v1/auth/
 - Unit tests (e.g., JUnit) 1. Test 1 (login_withValidAdminCredentials_returnsToken) : Vérifie que des identifiants valides (admin/admin123) renvoient un token JWT. 2. Test 2 (login_withInvalidCredentials_returnsUnauthorized) : Vérifie que des identifiants invalides renvoient une erreur 401 avec le message “Identifiants invalides”.
 
 - Integration tests (e.g., TestRestTemplate) 1. Vérifie que /api/v1/etudiants (GET) fonctionne avec un token ADMIN et USER. 2. Vérifie que /api/v1/etudiants (POST) fonctionne avec un token ADMIN mais échoue avec un token USER (403 Forbidden).
+
 - API testing (e.g., Postman, Newman)
   on passe directement à la configuration de JaCoCo pour mesurer la couverture des tests existants (ou des tests manuels si tu n’as pas de tests automatisés).
   Le plugin jacoco-maven-plugin est ajouté pour instrumenter le code et générer un rapport de couverture.
@@ -298,13 +299,19 @@ docker-compose up -d --force-recreate
 
 cd C:\Users\SERGE\Documents\gestion_etudiant\gestion_etudiant
 
-# Mettre à jour docker-compose.yml et application.properties (voir ci-dessus)
-
-mvn clean package
-
-docker build -t gestion_etudiant:latest .
-
-docker-compose down -v
+ 1. Après modification du code (Actualiser Docker / Rebuild & Restart)Chaque fois que tu modifies ton code Java (Spring Boot), tu dois :
+# 1. Recompiler ton projet  Dans CMD pour Compile le projet et génère le nouveau .jar dans /target.)
+(  mvn clean package -DskipTests )
+# 2. Reconstruit l'image Docker à partir de ton code modifié et redémarre les containers.
+(  docker-compose up -d --build --force-recreate )
+# Arrêter les containers
+(  docker-compose down )
+# Voir les logs d’un container
+(  docker-compose logs -f gestion_etudiant_container )
+# 🗑️ Supprimer tout et repartir de zéro (volumes inclus)
+(  	docker-compose down -v )
+# creer une image docker avec : 
+ ( docker build -t gestion_etudiant:latest . )
 
 docker-compose up -d --force-recreate ou docker-compose up -d --build --force-recreate
 
@@ -355,7 +362,7 @@ Votre fichier application.properties ne contient aucune configuration explicite 
 
 1. Générez un certificat SSL (par exemple, un certificat auto-signé pour le développement ou un certificat valide via Let's Encrypt pour la production).
    Utilisez keytool (inclus avec le JDK) pour créer un fichier KeyStore : dans CMD tapper :
-   ( keytool -genkeypair -alias gestion_etudiant -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore gestion_etudiant.p12 -validity 365 ) et l'on complete ligne par ligne
+   ( keytool -genkeypair -alias gestion_etudiant -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore gestion_etudiant.p12 -validity 365 ) et l'on complete lign e par ligne
    C:\Windows\system32>keytool -genkeypair -alias gestion_etudiant -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore gestion_etudiant.p12 -validity 3650
    Enter keystore password: sergios
    Keystore password is too short - must be at least 6 characters
@@ -391,8 +398,19 @@ Quand tu actives SSL (HTTPS) dans Spring Boot, il va obligatoirement écouter su
   Objectif : Limiter le nombre de requêtes qu’un utilisateur peut envoyer dans un intervalle de temps pour prévenir les abus (par ex., attaques DDoS ou brute force sur /api/v1/auth/login).
   Solution : Utiliser une bibliothèque comme Bucket4j ou configurer un reverse proxy (Nginx) avec rate limiting.
 
+👉 C’est une barrière (une limite) que tu mets sur ton API pour empêcher qu’un utilisateur ou un robot fasse trop de requêtes en peu de temps. Si un utilisateur ou une application fait trop d’appels API (par exemple 500 appels en 1 minute), ça peut :
+Surcharger ton serveur.
+Ralentir les autres utilisateurs normaux.
+➔ Le Rate Limiting va lui dire : "Tu as dépassé la limite, reviens après 1 minute".
+➔ C’est une façon de protéger tes ressources (CPU, base de données, réseau) pour que ton app reste fluide.Donc, Garder ton application rapide et stable.
 
+        ⚙️ Dans ton application à toi (gestion d’étudiants) :
+======================================================================
+Exemples concrets où le Rate Limiting va te protéger :
 
+Un hacker essaie 1000 connexions par seconde sur /api/v1/auth/login	Ton app plante ou ralentit	Ton app bloque : "429 Too Many Requests"
+Un utilisateur fait une boucle qui appelle /api/v1/etudiants 200 fois	Ton serveur se ralentit pour tout le monde	Le système lui dit d’attendre avant de continuer
+Un robot essaie d’insérer 1000 faux étudiants Ça pollue ta base de données	Il est freiné immédiatement.
 
 
 
